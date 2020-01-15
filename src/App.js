@@ -1,9 +1,20 @@
 import React, { lazy, Suspense, useState } from 'react'
 import ErrorBoundary from './ErrorBoundary'
-import { fetchPokemon, suspenseify } from './api'
+import { fetchPokemon, suspenseify, fetchPokemonCollection } from './api'
 const PokemonDetail = lazy(() => import('./pokemon-detail'))
 
 let initialPokemon = suspenseify(fetchPokemon(1))
+let initialCollection = suspenseify(fetchPokemonCollection())
+
+function PokemonCollection() {
+  return (
+    <div>
+      {initialCollection.read().results.map(pokemon => (
+        <li key={pokemon.name}> {pokemon.name} </li>
+      ))}
+    </div>
+  )
+}
 
 export default function App() {
   let [pokemon, setPokemon] = useState(initialPokemon)
@@ -32,6 +43,12 @@ export default function App() {
           >
             下一个
           </button>
+        </Suspense>
+      </ErrorBoundary>
+
+      <ErrorBoundary fallback={"Couldn't catch em all"}>
+        <Suspense fallback={'Catching your Pokemon...'}>
+          <PokemonCollection />
         </Suspense>
       </ErrorBoundary>
     </div>

@@ -32,3 +32,7 @@ export function fetchPokemon(id) {
     res.json(),
   )
 }
+
+export function fetchPokemonCollection() {
+  return fetch(`https://pokeapi.co/api/v2/pokemon`).then(res => res.json())
+}
