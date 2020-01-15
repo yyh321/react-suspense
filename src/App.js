@@ -24,33 +24,35 @@ export default function App() {
   return (
     <div>
       <h1>Pokedex</h1>
-      <ErrorBoundary fallback="Something is Wrong!">
-        <Suspense fallback={'Loading your Pokemon...'}>
-          <PokemonDetail
-            resource={deferredPokemon}
-            isStale={deferredPokemonIsStale}
-          />
-          <button
-            type="button"
-            disabled={deferredPokemonIsStale}
-            onClick={() =>
-              startTransition(() =>
-                setPokemon(
-                  suspenseify(fetchPokemon(deferredPokemon.read().id + 1)),
-                ),
-              )
-            }
-          >
-            下一个
-          </button>
+      <React.SuspenseList>
+        <Suspense fallback={<div>Fetch Pokemon...</div>}>
+          <ErrorBoundary fallback="Something is Wrong!">
+            <PokemonDetail
+              resource={deferredPokemon}
+              isStale={deferredPokemonIsStale}
+            />
+            <button
+              type="button"
+              disabled={deferredPokemonIsStale}
+              onClick={() =>
+                startTransition(() =>
+                  setPokemon(
+                    suspenseify(fetchPokemon(deferredPokemon.read().id + 1)),
+                  ),
+                )
+              }
+            >
+              下一个
+            </button>
+          </ErrorBoundary>
         </Suspense>
-      </ErrorBoundary>
 
-      <ErrorBoundary fallback={"Couldn't catch em all"}>
-        <Suspense fallback={'Catching your Pokemon...'}>
-          <PokemonCollection />
+        <Suspense fallback={<div>Fetching the Database...</div>}>
+          <ErrorBoundary fallback={"Couldn't catch em all"}>
+            <PokemonCollection />
+          </ErrorBoundary>
         </Suspense>
-      </ErrorBoundary>
+      </React.SuspenseList>
     </div>
   )
 }
