@@ -1,3 +1,4 @@
+import sleep from 'sleep-promise'
 export function suspenseify(promise) {
   let status = 'pending'
   let result
@@ -28,11 +29,20 @@ export function suspenseify(promise) {
 }
 
 export function fetchPokemon(id) {
-  return fetch(`https://pokeapi.co/api/v2/pokemon/${id}`).then(res =>
-    res.json(),
-  )
+  return fetch(`https://pokeapi.co/api/v2/pokemon/${id}`)
+    .then(res => res.json())
+    .then(sleep(1000))
 }
 
 export function fetchPokemonCollection() {
-  return fetch(`https://pokeapi.co/api/v2/pokemon`).then(res => res.json())
+  return fetch(`https://pokeapi.co/api/v2/pokemon`)
+    .then(res => res.json())
+    .then(res => ({
+      ...res,
+      results: res.results.map(pokemon => ({
+        ...pokemon,
+        id: pokemon.url.split('/')[6],
+      })),
+    }))
+    .then(sleep(2000))
 }
