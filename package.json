@@ -4,8 +4,8 @@
   "main": "index.js",
   "license": "MIT",
   "dependencies": {
-    "react": "^0.0.0-experimental-b53ea6ca0",
-    "react-dom": "^0.0.0-experimental-b53ea6ca0",
+    "react": "^0.0.0-experimental-f42431abe",
+    "react-dom": "^0.0.0-experimental-f42431abe",
     "react-scripts": "3.2.0",
     "sleep-promise": "^8.0.1"
   },

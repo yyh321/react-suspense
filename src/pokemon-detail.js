@@ -1,40 +1,24 @@
-/* eslint-disable no-labels */
-/* eslint-disable no-label-var */
-import React from 'react'
+import React, { useState } from 'react'
+import { fetchPokemon, suspenseify } from './api'
 
-function suspenseify(promise) {
-  let status = 'pending'
-  let result
-  let suspender = promise.then(
-    response => {
-      status = 'success'
-      result = response
-    },
-    error => {
-      status = 'error'
-      result = error
-    },
-  )
-
-  return {
-    read() {
-      if (status === 'pending') {
-        throw suspender
-      }
-      if (status === 'error') {
-        throw result
-      }
-      if (status === 'success') {
-        return result
-      }
-    },
-  }
-}
-
-let pokemon = suspenseify(
-  fetch('https://pokeapi.co/api/v2/pokemon/2').then(res => res.json()),
-)
+let initialPokemon = suspenseify(fetchPokemon(2))
 
 export default function PokemonDetail() {
-  return <div>{pokemon.read().name}</div>
+  let [pokemonResource, setPokemonResource] = useState(initialPokemon)
+  let [startTransition] = React.useTransition()
+  let pokemon = pokemonResource.read()
+  return (
+    <div>
+      {pokemon.name}{' '}
+      <button
+        onClick={() =>
+          startTransition(() =>
+            setPokemonResource(suspenseify(fetchPokemon(pokemon.id + 1))),
+          )
+        }
+      >
+        下一个
+      </button>
+    </div>
+  )
 }
